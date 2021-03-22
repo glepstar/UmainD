@@ -11,10 +11,10 @@
         Background="WhiteSmoke">
     <Window.Style>
         <Style TargetType="Window">
-            <!-- フォントは自分で買ってね!
             <Setter Property="FontFamily" Value="Fonts\WanpakuRuika-07.TTF#わんぱくルイカ-０７" />
-            -->
+            <!-- フォントは自分で買ってね!
             <Setter Property="FontFamily" Value="Meiryo UI"/>
+            -->
             <Setter Property="FontWeight" Value="Medium"/>
         </Style>
     </Window.Style>

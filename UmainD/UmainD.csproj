@@ -117,10 +117,10 @@
     <Folder Include="Data\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Carrot.png" />
+    <Resource Include="carrot.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="carrot.ico" />
+    <Resource Include="Resources\carrot.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
