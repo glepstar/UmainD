@@ -12,7 +12,6 @@ namespace UmainD.ViewModel
     class MainViewModel : BindingBase
     {
         // TODO : レースの順位を記録できるように
-        // TODO : 合宿は別カウントできるように(練習レベルに影響しないため)
         // TODO : 月ごとにレースが列挙されるように
 
         private const int MaxTurn = 78;
@@ -48,9 +47,9 @@ namespace UmainD.ViewModel
         {
             get { return ActionHistory.Actions.Select(v => v as Race).Count(v => v?.RaceGrade == RaceGrade.Open); }
         }
-        public int DeviewCount
+        public int DebutCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Race).Count(v => v?.RaceGrade == RaceGrade.Deview); }
+            get { return ActionHistory.Actions.Select(v => v as Race).Count(v => v?.RaceGrade == RaceGrade.Debut); }
         }
 
 
@@ -200,10 +199,10 @@ namespace UmainD.ViewModel
             UpdateRaceCount();
         }
 
-        public ICommand ChoiceDeview { get { return new DelegateCommand(OnChoiceDeview, () => Turn <= MaxTurn); } }
-        private void OnChoiceDeview()
+        public ICommand ChoiceDebut { get { return new DelegateCommand(OnChoiceDebut, () => Turn <= MaxTurn); } }
+        private void OnChoiceDebut()
         {
-            ActionHistory.Add(new Race { RaceGrade = RaceGrade.Deview, Turn = Turn });
+            ActionHistory.Add(new Race { RaceGrade = RaceGrade.Debut, Turn = Turn });
             RaisePropertyChanged("Turn");
             UpdateRaceCount();
         }
@@ -397,7 +396,7 @@ namespace UmainD.ViewModel
             RaisePropertyChanged("G2Count");
             RaisePropertyChanged("G3Count");
             RaisePropertyChanged("OpenCount");
-            RaisePropertyChanged("DeviewCount");
+            RaisePropertyChanged("DebutCount");
         }
 
         private void UpdateTrainingCount()

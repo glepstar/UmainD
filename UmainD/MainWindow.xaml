@@ -185,8 +185,8 @@
                         <TextBlock Foreground="#FFAD0B" Style="{StaticResource Counter}" Text="{Binding OpenCount, StringFormat={}{0}回}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <Button Background="#A2DF05" Style="{StaticResource MiniButton}" Command="{Binding ChoiceDeview}">デビュー/未勝利</Button>
-                        <TextBlock Foreground="#A2DF05" Style="{StaticResource Counter}" Text="{Binding DeviewCount, StringFormat={}{0}回}"/>
+                        <Button Background="#A2DF05" Style="{StaticResource MiniButton}" Command="{Binding ChoiceDebut}">デビュー/未勝利</Button>
+                        <TextBlock Foreground="#A2DF05" Style="{StaticResource Counter}" Text="{Binding DebutCount, StringFormat={}{0}回}"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>

@@ -20,6 +20,6 @@ namespace UmainD.Models
         G2,
         G3,
         Open,
-        Deview
+        Debut
     }
 }
