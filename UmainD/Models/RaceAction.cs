@@ -3,23 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UmainD.Data;
 
 namespace UmainD.Models
 {
-    class Race : IAction
+    class RaceAction : IAction
     {
         public int Turn { get; set; }
         public RaceGrade RaceGrade { get; set; }
         public int Rank { get; set; }
-    }
-
-    enum RaceGrade
-    {
-        URA,
-        G1,
-        G2,
-        G3,
-        Open,
-        Debut
     }
 }

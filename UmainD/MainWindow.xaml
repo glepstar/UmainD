@@ -20,6 +20,11 @@
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
+    <Window.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="リセット" Command="{Binding Reset}"/>
+        </ContextMenu>
+    </Window.ContextMenu>
     <Grid Margin="10 5">
         <Grid.Resources>
             <cnv:TurnToRankConverter x:Key="TurnToRankConverter"/>
@@ -29,17 +34,16 @@
                 <Setter Property="Foreground" Value="WhiteSmoke"/>
                 <Setter Property="FontSize" Value="20"/>
                 <Setter Property="Height" Value="40"/>
-                <Setter Property="Margin" Value="5 3"/>
-                <Setter Property="Padding" Value="10"/>
+                <Setter Property="Margin" Value="2"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
                             <Grid ClipToBounds="True">
-                                <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                <Border x:Name="bt_border" Background="{TemplateBinding Background}" CornerRadius="4">
                                     <Border.Effect>
-                                        <DropShadowEffect BlurRadius="4" Direction="-90" RenderingBias="Quality" ShadowDepth="0"/>
+                                        <DropShadowEffect BlurRadius="6" Direction="-90" RenderingBias="Quality" ShadowDepth="0"/>
                                     </Border.Effect>
-                                    <Label Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" 
+                                    <Label x:Name="bt_label" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" 
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
                                        VerticalContentAlignment="Center"
@@ -49,6 +53,19 @@
                                     </Label>
                                 </Border>
                             </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bt_border" Property="Background" Value="#E8D0FA"/>
+                                    <Setter TargetName="bt_label" Property="Foreground" Value="#5A5062"/>
+                                    <Setter TargetName="bt_border" Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect 
+                                        BlurRadius="12" Direction="-90" RenderingBias="Quality" ShadowDepth="4" Opacity="0.8"
+                                        ></DropShadowEffect>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -56,7 +73,6 @@
             <Style x:Key="PlusButton" TargetType="Button" BasedOn="{StaticResource CommonButton}">
                 <Setter Property="FontSize" Value="22"/>
                 <Setter Property="Height" Value="60"/>
-                <Setter Property="Width" Value="100"/>
             </Style>
             <Style x:Key="SuperPlusButton" TargetType="Button" BasedOn="{StaticResource PlusButton}">
                 <Setter Property="FontSize" Value="18"/>
@@ -70,13 +86,12 @@
                 <Setter Property="FontSize" Value="11"/>
                 <Setter Property="Height" Value="28"/>
                 <Setter Property="Width" Value="100"/>
-                <Setter Property="Margin" Value="1"/>
             </Style>
             <Style x:Key="MiddleButton" TargetType="Button" BasedOn="{StaticResource PlusButton}">
                 <Setter Property="FontSize" Value="20"/>
                 <Setter Property="Height" Value="48"/>
                 <Setter Property="Width" Value="100"/>
-                <Setter Property="Margin" Value="3"/>
+                <Setter Property="Margin" Value="2"/>
             </Style>
 
             <Style x:Key="CommonTextBlock" TargetType="TextBlock">
@@ -88,7 +103,7 @@
                 <Setter Property="FontSize" Value="42"/>
                 <Setter Property="Foreground" Value="#FFFFFF"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Margin" Value="2"/>
             </Style>
             <Style x:Key="Counter" TargetType="TextBlock" BasedOn="{StaticResource CommonTextBlock}">
                 <Setter Property="Height" Value="30"/>
@@ -147,6 +162,30 @@
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Row="0" Grid.Column="0" Margin="5">
+                <ListView ItemsSource="{Binding RaceOfTurn}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="140" BorderBrush="DarkOrange" BorderThickness="2">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Background="Black" Foreground="White" Text="{Binding Grade}" FontSize="14"/>
+                                        <TextBlock Text="{Binding Name}" Margin="5 0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Course}"/>
+                                        <TextBlock Text="{Binding Turf}" Margin="5 0"/>
+                                        <TextBlock Text="{Binding Distance, StringFormat={}{0}m}" Margin="5 0"/>
+                                        <TextBlock Text="{Binding Direction}" Margin="5 0"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding Fun, StringFormat={}{0}人}"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+                
+            <Grid Grid.Row="0" Grid.Column="1" Margin="5">
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
                         <Button x:Name="EX" Style="{StaticResource MiniButton}" Content="EX" Command="{Binding ChoiceURA}">

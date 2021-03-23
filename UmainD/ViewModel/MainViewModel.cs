@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using UmainD.Data;
 using UmainD.Models;
 
 namespace UmainD.ViewModel
@@ -13,6 +16,19 @@ namespace UmainD.ViewModel
     {
         // TODO : レースの順位を記録できるように
         // TODO : 月ごとにレースが列挙されるように
+
+        public MainViewModel()
+        {
+            try
+            {
+                raceInfos = JsonConvert.DeserializeObject<RaceInfo[]>(File.ReadAllText("./Json/Race.json"));
+            }
+            catch{ 
+                // No Action 
+            }
+        }
+
+        private readonly RaceInfo[] raceInfos;
 
         private const int MaxTurn = 78;
         private const int MinTurn = 1;
@@ -27,131 +43,136 @@ namespace UmainD.ViewModel
             get { return ActionHistory.Turn; }
         }
 
+        public RaceInfo[] RaceOfTurn
+        {
+            get { return raceInfos.Where(v => v.Turn.Contains(Turn)).ToArray(); }
+        }
+
         public int URACount
         {
-            get { return ActionHistory.Actions.Select(v => v as Race).Count(v => v?.RaceGrade == RaceGrade.URA); }
+            get { return ActionHistory.Actions.Select(v => v as RaceAction).Count(v => v?.RaceGrade == RaceGrade.URA); }
         }
         public int G1Count
         {
-            get { return ActionHistory.Actions.Select(v => v as Race).Count(v => v?.RaceGrade == RaceGrade.G1); }
+            get { return ActionHistory.Actions.Select(v => v as RaceAction).Count(v => v?.RaceGrade == RaceGrade.G1); }
         }
         public int G2Count
         {
-            get { return ActionHistory.Actions.Select(v => v as Race).Count(v => v?.RaceGrade == RaceGrade.G2); }
+            get { return ActionHistory.Actions.Select(v => v as RaceAction).Count(v => v?.RaceGrade == RaceGrade.G2); }
         }
         public int G3Count
         {
-            get { return ActionHistory.Actions.Select(v => v as Race).Count(v => v?.RaceGrade == RaceGrade.G3); }
+            get { return ActionHistory.Actions.Select(v => v as RaceAction).Count(v => v?.RaceGrade == RaceGrade.G3); }
         }
         public int OpenCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Race).Count(v => v?.RaceGrade == RaceGrade.Open); }
+            get { return ActionHistory.Actions.Select(v => v as RaceAction).Count(v => v?.RaceGrade == RaceGrade.Open); }
         }
         public int DebutCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Race).Count(v => v?.RaceGrade == RaceGrade.Debut); }
+            get { return ActionHistory.Actions.Select(v => v as RaceAction).Count(v => v?.RaceGrade == RaceGrade.Debut); }
         }
 
 
         public int SpeedCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Speed && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Speed && v?.Result == TrainingResult.Success); }
         }
         public int SpeedFriendlyCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Count(v => v?.Kind == TrainingKind.Speed && v?.IsFriendlyTag == true && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Count(v => v?.Kind == TrainingKind.Speed && v?.IsFriendlyTag == true && v?.Result == TrainingResult.Success); }
         }
         public int SpeedFailedCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Count(v => v?.Kind == TrainingKind.Speed && v?.Result == TrainingResult.Failed); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Count(v => v?.Kind == TrainingKind.Speed && v?.Result == TrainingResult.Failed); }
         }
         public int SpeedCampCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Speed && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Speed && v?.Result == TrainingResult.Success); }
         }
 
 
         public int StaminaCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Stamina && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Stamina && v?.Result == TrainingResult.Success); }
         }
         public int StaminaFriendlyCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Count(v => v?.Kind == TrainingKind.Stamina && v?.IsFriendlyTag == true && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Count(v => v?.Kind == TrainingKind.Stamina && v?.IsFriendlyTag == true && v?.Result == TrainingResult.Success); }
         }
         public int StaminaFailedCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Count(v => v?.Kind == TrainingKind.Stamina && v?.Result == TrainingResult.Failed); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Count(v => v?.Kind == TrainingKind.Stamina && v?.Result == TrainingResult.Failed); }
         }
         public int StaminaCampCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Stamina && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Stamina && v?.Result == TrainingResult.Success); }
         }
 
         public int PowerCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Power && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Power && v?.Result == TrainingResult.Success); }
         }
         public int PowerFriendlyCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Count(v => v?.Kind == TrainingKind.Power && v?.IsFriendlyTag == true && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Count(v => v?.Kind == TrainingKind.Power && v?.IsFriendlyTag == true && v?.Result == TrainingResult.Success); }
         }
         public int PowerFailedCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Count(v => v?.Kind == TrainingKind.Power && v?.Result == TrainingResult.Failed); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Count(v => v?.Kind == TrainingKind.Power && v?.Result == TrainingResult.Failed); }
         }
         public int PowerCampCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Power && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Power && v?.Result == TrainingResult.Success); }
         }
 
         public int GutsCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Guts && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Guts && v?.Result == TrainingResult.Success); }
         }
         public int GutsFriendlyCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Count(v => v?.Kind == TrainingKind.Guts && v?.IsFriendlyTag == true && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Count(v => v?.Kind == TrainingKind.Guts && v?.IsFriendlyTag == true && v?.Result == TrainingResult.Success); }
         }
         public int GutsFailedCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Count(v => v?.Kind == TrainingKind.Guts && v?.Result == TrainingResult.Failed); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Count(v => v?.Kind == TrainingKind.Guts && v?.Result == TrainingResult.Failed); }
         }
         public int GutsCampCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Guts && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Guts && v?.Result == TrainingResult.Success); }
         }
 
         public int WiseCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Wise && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Wise && v?.Result == TrainingResult.Success); }
         }
         public int WiseFriendlyCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Count(v => v?.Kind == TrainingKind.Wise && v?.IsFriendlyTag == true && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Count(v => v?.Kind == TrainingKind.Wise && v?.IsFriendlyTag == true && v?.Result == TrainingResult.Success); }
         }
         public int WiseFailedCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Count(v => v?.Kind == TrainingKind.Wise && v?.Result == TrainingResult.Failed); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Count(v => v?.Kind == TrainingKind.Wise && v?.Result == TrainingResult.Failed); }
         }
         public int WiseCampCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Wise && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as TrainingAction).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Wise && v?.Result == TrainingResult.Success); }
         }
 
         public int HolidayCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Leisure).Count(v => v?.Kind == LeisureKind.Holiday); }
+            get { return ActionHistory.Actions.Select(v => v as LeisureAction).Count(v => v?.Kind == LeisureKind.Holiday); }
 
         }
         public int DateCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Leisure).Count(v => v?.Kind == LeisureKind.Date); }
+            get { return ActionHistory.Actions.Select(v => v as LeisureAction).Count(v => v?.Kind == LeisureKind.Date); }
 
         }
         public int InfirmaryCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Leisure).Count(v => v?.Kind == LeisureKind.Infirmary); }
+            get { return ActionHistory.Actions.Select(v => v as LeisureAction).Count(v => v?.Kind == LeisureKind.Infirmary); }
 
         }
 
@@ -162,49 +183,43 @@ namespace UmainD.ViewModel
         public ICommand ChoiceURA { get { return new DelegateCommand(OnChoiceURA, () => Turn <= MaxTurn); } }
         private void OnChoiceURA()
         {
-            ActionHistory.Add(new Race { RaceGrade = RaceGrade.URA, Turn = Turn });
-            RaisePropertyChanged("Turn");
-            UpdateRaceCount();
+            ActionHistory.Add(new RaceAction { RaceGrade = RaceGrade.URA, Turn = Turn });
+            Update();
         }
 
         public ICommand ChoiceG1 { get { return new DelegateCommand(OnChoiceG1, () => Turn <= MaxTurn); } }
         private void OnChoiceG1()
         {
-            ActionHistory.Add(new Race { RaceGrade = RaceGrade.G1, Turn = Turn });
-            RaisePropertyChanged("Turn");
-            UpdateRaceCount();
+            ActionHistory.Add(new RaceAction { RaceGrade = RaceGrade.G1, Turn = Turn });
+            Update();
         }
 
         public ICommand ChoiceG2 { get { return new DelegateCommand(OnChoiceG2, () => Turn <= MaxTurn); } }
         private void OnChoiceG2()
         {
-            ActionHistory.Add(new Race { RaceGrade = RaceGrade.G2, Turn = Turn });
-            RaisePropertyChanged("Turn");
-            UpdateRaceCount();
+            ActionHistory.Add(new RaceAction { RaceGrade = RaceGrade.G2, Turn = Turn });
+            Update();
         }
 
         public ICommand ChoiceG3 { get { return new DelegateCommand(OnChoiceG3, () => Turn <= MaxTurn); } }
         private void OnChoiceG3()
         {
-            ActionHistory.Add(new Race { RaceGrade = RaceGrade.G3, Turn = Turn });
-            RaisePropertyChanged("Turn");
-            UpdateRaceCount();
+            ActionHistory.Add(new RaceAction { RaceGrade = RaceGrade.G3, Turn = Turn });
+            Update();
         }
 
         public ICommand ChoiceOpen { get { return new DelegateCommand(OnChoiceOpen, () => Turn <= MaxTurn); } }
         private void OnChoiceOpen()
         {
-            ActionHistory.Add(new Race { RaceGrade = RaceGrade.Open, Turn = Turn });
-            RaisePropertyChanged("Turn");
-            UpdateRaceCount();
+            ActionHistory.Add(new RaceAction { RaceGrade = RaceGrade.Open, Turn = Turn });
+            Update();
         }
 
         public ICommand ChoiceDebut { get { return new DelegateCommand(OnChoiceDebut, () => Turn <= MaxTurn); } }
         private void OnChoiceDebut()
         {
-            ActionHistory.Add(new Race { RaceGrade = RaceGrade.Debut, Turn = Turn });
-            RaisePropertyChanged("Turn");
-            UpdateRaceCount();
+            ActionHistory.Add(new RaceAction { RaceGrade = RaceGrade.Debut, Turn = Turn });
+            Update();
         }
 
         #region TrainingCommands
@@ -212,25 +227,22 @@ namespace UmainD.ViewModel
         public ICommand ChoiceSpeedFriendly { get { return new DelegateCommand(OnChoiceSpeedFriendly, () => Turn <= MaxTurn); } }
         private void OnChoiceSpeedFriendly()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Speed, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = true });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Speed, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = true });
+            Update();
         }
 
         public ICommand ChoiceSpeedSuccess { get { return new DelegateCommand(OnChoiceSpeedSuccess, () => Turn <= MaxTurn); } }
         private void OnChoiceSpeedSuccess()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Speed, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = false });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Speed, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = false });
+            Update();
         }
 
         public ICommand ChoiceSpeedFailer { get { return new DelegateCommand(OnChoiceSpeedFailer, () => Turn <= MaxTurn); } }
         private void OnChoiceSpeedFailer()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Speed, Turn = Turn, Result = TrainingResult.Failed, IsFriendlyTag = false });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Speed, Turn = Turn, Result = TrainingResult.Failed, IsFriendlyTag = false });
+            Update();
         }
         #endregion
 
@@ -238,25 +250,22 @@ namespace UmainD.ViewModel
         public ICommand ChoiceStaminaFriendly { get { return new DelegateCommand(OnChoiceStaminaFriendly, () => Turn <= MaxTurn); } }
         private void OnChoiceStaminaFriendly()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Stamina, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = true });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Stamina, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = true });
+            Update();
         }
 
         public ICommand ChoiceStaminaSuccess { get { return new DelegateCommand(OnChoiceStaminaSuccess, () => Turn <= MaxTurn); } }
         private void OnChoiceStaminaSuccess()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Stamina, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = false });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Stamina, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = false });
+            Update();
         }
 
         public ICommand ChoiceStaminaFailer { get { return new DelegateCommand(OnChoiceStaminaFailer, () => Turn <= MaxTurn); } }
         private void OnChoiceStaminaFailer()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Stamina, Turn = Turn, Result = TrainingResult.Failed, IsFriendlyTag = false });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Stamina, Turn = Turn, Result = TrainingResult.Failed, IsFriendlyTag = false });
+            Update();
         }
         #endregion
 
@@ -264,25 +273,22 @@ namespace UmainD.ViewModel
         public ICommand ChoicePowerFriendly { get { return new DelegateCommand(OnChoicePowerFriendly, () => Turn <= MaxTurn); } }
         private void OnChoicePowerFriendly()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Power, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = true });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Power, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = true });
+            Update();
         }
 
         public ICommand ChoicePowerSuccess { get { return new DelegateCommand(OnChoicePowerSuccess, () => Turn <= MaxTurn); } }
         private void OnChoicePowerSuccess()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Power, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = false });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Power, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = false });
+            Update();
         }
 
         public ICommand ChoicePowerFailer { get { return new DelegateCommand(OnChoicePowerFailer, () => Turn <= MaxTurn); } }
         private void OnChoicePowerFailer()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Power, Turn = Turn, Result = TrainingResult.Failed, IsFriendlyTag = false });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Power, Turn = Turn, Result = TrainingResult.Failed, IsFriendlyTag = false });
+            Update();
         }
         #endregion
 
@@ -290,25 +296,22 @@ namespace UmainD.ViewModel
         public ICommand ChoiceGutsFriendly { get { return new DelegateCommand(OnChoiceGutsFriendly, () => Turn <= MaxTurn); } }
         private void OnChoiceGutsFriendly()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Guts, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = true });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Guts, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = true });
+            Update();
         }
 
         public ICommand ChoiceGutsSuccess { get { return new DelegateCommand(OnChoiceGutsSuccess, () => Turn <= MaxTurn); } }
         private void OnChoiceGutsSuccess()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Guts, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = false });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Guts, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = false });
+            Update();
         }
 
         public ICommand ChoiceGutsFailer { get { return new DelegateCommand(OnChoiceGutsFailer, () => Turn <= MaxTurn); } }
         private void OnChoiceGutsFailer()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Guts, Turn = Turn, Result = TrainingResult.Failed, IsFriendlyTag = false });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Guts, Turn = Turn, Result = TrainingResult.Failed, IsFriendlyTag = false });
+            Update();
         }
         #endregion
 
@@ -316,25 +319,22 @@ namespace UmainD.ViewModel
         public ICommand ChoiceWiseFriendly { get { return new DelegateCommand(OnChoiceWiseFriendly, () => Turn <= MaxTurn); } }
         private void OnChoiceWiseFriendly()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Wise, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = true });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Wise, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = true });
+            Update();
         }
 
         public ICommand ChoiceWiseSuccess { get { return new DelegateCommand(OnChoiceWiseSuccess, () => Turn <= MaxTurn); } }
         private void OnChoiceWiseSuccess()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Wise, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = false });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Wise, Turn = Turn, Result = TrainingResult.Success, IsFriendlyTag = false });
+            Update();
         }
 
         public ICommand ChoiceWiseFailer { get { return new DelegateCommand(OnChoiceWiseFailer, () => Turn <= MaxTurn); } }
         private void OnChoiceWiseFailer()
         {
-            ActionHistory.Add(new Training { Kind = TrainingKind.Wise, Turn = Turn, Result = TrainingResult.Failed, IsFriendlyTag = false });
-            RaisePropertyChanged("Turn");
-            UpdateTrainingCount();
+            ActionHistory.Add(new TrainingAction { Kind = TrainingKind.Wise, Turn = Turn, Result = TrainingResult.Failed, IsFriendlyTag = false });
+            Update();
         }
         #endregion
         #endregion
@@ -342,35 +342,37 @@ namespace UmainD.ViewModel
         public ICommand ChoiceHoliday { get { return new DelegateCommand(OnChoiceHoliday, () => Turn <= MaxTurn); } }
         private void OnChoiceHoliday()
         {
-            ActionHistory.Add(new Leisure { Kind = LeisureKind.Holiday, Turn = Turn });
-            RaisePropertyChanged("Turn");
-            UpdateLeisuresCount();
+            ActionHistory.Add(new LeisureAction { Kind = LeisureKind.Holiday, Turn = Turn });
+            Update();
         }
 
         public ICommand ChoiceDate { get { return new DelegateCommand(OnChoiceDate, () => Turn <= MaxTurn); } }
         private void OnChoiceDate()
         {
-            ActionHistory.Add(new Leisure { Kind = LeisureKind.Date, Turn = Turn });
-            RaisePropertyChanged("Turn");
-            UpdateLeisuresCount();
+            ActionHistory.Add(new LeisureAction { Kind = LeisureKind.Date, Turn = Turn });
+            Update();
         }
 
         public ICommand ChoiceInfirmary { get { return new DelegateCommand(OnChoiceInfirmary, () => Turn <= MaxTurn); } }
         private void OnChoiceInfirmary()
         {
-            ActionHistory.Add(new Leisure { Kind = LeisureKind.Infirmary, Turn = Turn });
-            RaisePropertyChanged("Turn");
-            UpdateLeisuresCount();
+            ActionHistory.Add(new LeisureAction { Kind = LeisureKind.Infirmary, Turn = Turn });
+            Update();
         }
 
         public ICommand Undo { get { return new DelegateCommand(OnUndo, () => Turn > MinTurn); } }
         private void OnUndo()
         {
             ActionHistory.Remove();
-            RaisePropertyChanged("Turn");
-            UpdateRaceCount();
-            UpdateTrainingCount();
-            UpdateLeisuresCount();
+            Update();
+        }
+
+        public ICommand Reset { get { return new DelegateCommand(OnReset); } }
+
+        private void OnReset()
+        {
+            ActionHistory.Clear();
+            Update();
         }
 
         #endregion
@@ -383,6 +385,7 @@ namespace UmainD.ViewModel
         private void Update()
         {
             RaisePropertyChanged("Turn");
+            RaisePropertyChanged("RaceOfTurn");
 
             UpdateRaceCount();
             UpdateTrainingCount();

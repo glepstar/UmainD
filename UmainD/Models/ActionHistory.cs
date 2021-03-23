@@ -23,5 +23,10 @@ namespace UmainD.Models
         {
             actionHistory.Pop();
         }
+
+        internal void Clear()
+        {
+            actionHistory.Clear();
+        }
     }
 }
