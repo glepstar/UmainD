@@ -34,12 +34,12 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Grid x:Name="PART_grid" ClipToBounds="True">
-                                <Border x:Name="PART_border" Background="{TemplateBinding Background}" CornerRadius="8">
+                            <Grid ClipToBounds="True">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="8">
                                     <Border.Effect>
                                         <DropShadowEffect BlurRadius="4" Direction="-90" RenderingBias="Quality" ShadowDepth="0"/>
                                     </Border.Effect>
-                                    <Label x:Name="PART_label" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" 
+                                    <Label Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" 
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
                                        VerticalContentAlignment="Center"
@@ -48,42 +48,7 @@
                                         <ContentPresenter></ContentPresenter>
                                     </Label>
                                 </Border>
-                                <!--↓この下は後で書き直す-->
-                                <!-- リップルアニメーション用のエフェクトを配置-->
-                                <Ellipse x:Name="PART_effectRipple" Fill="White" Width="0"
-                                 Height="{Binding Path=Width, RelativeSource={RelativeSource Self}}" 
-                                 HorizontalAlignment="Left" VerticalAlignment="Top"
-                                 Opacity="0.5">
-                                </Ellipse>
-
-                                <Grid.Resources>
-                                    <Storyboard x:Key="RippleAnimation" Storyboard.TargetName="PART_effectRipple">
-                                        <!-- 波形(リップル)のアニメーションを実行 -->
-                                        <DoubleAnimation Storyboard.TargetProperty="Width" From="0" Duration="0:0:0.5"/>
-                                        <ThicknessAnimation Storyboard.TargetProperty="Margin" Duration="0:0:0.5"/>
-
-                                        <!-- 元に戻すためのアニメーション-->
-                                        <DoubleAnimation Storyboard.TargetProperty="Width" To="0" BeginTime="0:0:0.5" Duration="0:0:0" />
-
-                                    </Storyboard>
-                                </Grid.Resources>
                             </Grid>
-                            <ControlTemplate.Triggers>
-                                <!-- マウスホバーが行われた際のスタイル設定 -->
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <!-- 背景色の変更 -->
-                                    <Setter TargetName="PART_border" Property="Background" Value="#E4D1F2"/>
-                                    <Setter TargetName="PART_label" Property="Foreground" Value="#58515D"/>
-                                    <!-- 影の付け方の変更 -->
-                                    <Setter TargetName="PART_border" Property="Effect">
-                                        <Setter.Value>
-                                            <DropShadowEffect 
-                                        BlurRadius="12" Direction="-90" RenderingBias="Quality" ShadowDepth="4" Opacity="0.8"
-                                        ></DropShadowEffect>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -284,7 +249,7 @@
                 <TextBlock Foreground="{Binding Background, ElementName=btnSpFr}" Style="{StaticResource FriendlyCounter}" Text="{Binding SpeedFriendlyCount, StringFormat={}{0}回}"/>
                 <TextBlock Foreground="{Binding Background, ElementName=btnSp}" Style="{StaticResource Counter}" Text="{Binding SpeedCount, StringFormat={}{0}回}"/>
                 <TextBlock Foreground="#8A2BE2" Style="{StaticResource CampCounter}" Text="{Binding SpeedCampCount, StringFormat={}{0}回}"/>
-                
+
             </StackPanel>
             <StackPanel>
                 <TextBlock Foreground="{Binding Background, ElementName=btnStFr}" Style="{StaticResource FriendlyCounter}" Text="{Binding StaminaFriendlyCount, StringFormat={}{0}回}"/>
