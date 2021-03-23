@@ -20,7 +20,7 @@ namespace UmainD.ViewModel
 
         private static readonly int[] TrainingCampTurns = new[] { 37, 38, 39, 40, 61, 62, 63, 64 };
 
-        #region  
+        #region Properties
         public ActionHistory ActionHistory { get; } = new ActionHistory();
 
         public int Turn
@@ -56,7 +56,7 @@ namespace UmainD.ViewModel
 
         public int SpeedCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v.Turn)).Count(v => v?.Kind == TrainingKind.Speed && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Speed && v?.Result == TrainingResult.Success); }
         }
         public int SpeedFriendlyCount
         {
@@ -68,13 +68,13 @@ namespace UmainD.ViewModel
         }
         public int SpeedCampCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v.Turn)).Count(v => v?.Kind == TrainingKind.Speed && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Speed && v?.Result == TrainingResult.Success); }
         }
 
 
         public int StaminaCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v.Turn)).Count(v => v?.Kind == TrainingKind.Stamina && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Stamina && v?.Result == TrainingResult.Success); }
         }
         public int StaminaFriendlyCount
         {
@@ -86,12 +86,12 @@ namespace UmainD.ViewModel
         }
         public int StaminaCampCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v.Turn)).Count(v => v?.Kind == TrainingKind.Stamina && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Stamina && v?.Result == TrainingResult.Success); }
         }
 
         public int PowerCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v.Turn)).Count(v => v?.Kind == TrainingKind.Power && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Power && v?.Result == TrainingResult.Success); }
         }
         public int PowerFriendlyCount
         {
@@ -103,12 +103,12 @@ namespace UmainD.ViewModel
         }
         public int PowerCampCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v.Turn)).Count(v => v?.Kind == TrainingKind.Power && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Power && v?.Result == TrainingResult.Success); }
         }
 
         public int GutsCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v.Turn)).Count(v => v?.Kind == TrainingKind.Guts && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Guts && v?.Result == TrainingResult.Success); }
         }
         public int GutsFriendlyCount
         {
@@ -120,12 +120,12 @@ namespace UmainD.ViewModel
         }
         public int GutsCampCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v.Turn)).Count(v => v?.Kind == TrainingKind.Guts && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Guts && v?.Result == TrainingResult.Success); }
         }
 
         public int WiseCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v.Turn)).Count(v => v?.Kind == TrainingKind.Wise && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => !IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Wise && v?.Result == TrainingResult.Success); }
         }
         public int WiseFriendlyCount
         {
@@ -137,7 +137,7 @@ namespace UmainD.ViewModel
         }
         public int WiseCampCount
         {
-            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v.Turn)).Count(v => v?.Kind == TrainingKind.Wise && v?.Result == TrainingResult.Success); }
+            get { return ActionHistory.Actions.Select(v => v as Training).Where(v => IsTrainingCamp(v?.Turn ?? 0)).Count(v => v?.Kind == TrainingKind.Wise && v?.Result == TrainingResult.Success); }
         }
 
         public int HolidayCount
@@ -405,18 +405,23 @@ namespace UmainD.ViewModel
             RaisePropertyChanged("SpeedFriendlyCount");
             RaisePropertyChanged("SpeedCount");
             RaisePropertyChanged("SpeedFailedCount");
+            RaisePropertyChanged("SpeedCampCount");
             RaisePropertyChanged("StaminaFriendlyCount");
             RaisePropertyChanged("StaminaCount");
             RaisePropertyChanged("StaminaFailedCount");
+            RaisePropertyChanged("StaminaCampCount");
             RaisePropertyChanged("PowerFriendlyCount");
             RaisePropertyChanged("PowerCount");
             RaisePropertyChanged("PowerFailedCount");
+            RaisePropertyChanged("PowerCampCount");
             RaisePropertyChanged("GutsFriendlyCount");
             RaisePropertyChanged("GutsCount");
             RaisePropertyChanged("GutsFailedCount");
+            RaisePropertyChanged("GutsCampCount");
             RaisePropertyChanged("WiseFriendlyCount");
             RaisePropertyChanged("WiseCount");
             RaisePropertyChanged("WiseFailedCount");
+            RaisePropertyChanged("WiseCampCount");
         }
         private void UpdateLeisuresCount()
         {

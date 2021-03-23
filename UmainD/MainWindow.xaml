@@ -7,13 +7,12 @@
         xmlns:cnv="clr-namespace:UmainD.Converters"
         xmlns:local="clr-namespace:UmainD"
         mc:Ignorable="d"
-        Title="UmainD" Height="480" Width="800"
+        Title="UmainD" Height="500" Width="820"
         Background="WhiteSmoke">
     <Window.Style>
         <Style TargetType="Window">
-            <Setter Property="FontFamily" Value="Fonts\WanpakuRuika-07.TTF#わんぱくルイカ-０７" />
             <!-- フォントは自分で買ってね!
-            <Setter Property="FontFamily" Value="Meiryo UI"/>
+            <Setter Property="FontFamily" Value="Fonts\WanpakuRuika-07.TTF#わんぱくルイカ-０７" />
             -->
             <Setter Property="FontWeight" Value="Medium"/>
         </Style>
@@ -35,21 +34,56 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="4">
-                                <Border.Effect>
-                                    <DropShadowEffect BlurRadius="8" Direction="-90" RenderingBias="Quality" ShadowDepth="0"/>
-                                </Border.Effect>
-                                <Label Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" 
+                            <Grid x:Name="PART_grid" ClipToBounds="True">
+                                <Border x:Name="PART_border" Background="{TemplateBinding Background}" CornerRadius="8">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="4" Direction="-90" RenderingBias="Quality" ShadowDepth="0"/>
+                                    </Border.Effect>
+                                    <Label x:Name="PART_label" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" 
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
                                        VerticalContentAlignment="Center"
                                        HorizontalContentAlignment="Center"
                                        Foreground="{TemplateBinding Foreground}">
-                                    <ContentPresenter></ContentPresenter>
-                                </Label>
-                            </Border>
-                            <ControlTemplate.Resources>
-                            </ControlTemplate.Resources>
+                                        <ContentPresenter></ContentPresenter>
+                                    </Label>
+                                </Border>
+                                <!--↓この下は後で書き直す-->
+                                <!-- リップルアニメーション用のエフェクトを配置-->
+                                <Ellipse x:Name="PART_effectRipple" Fill="White" Width="0"
+                                 Height="{Binding Path=Width, RelativeSource={RelativeSource Self}}" 
+                                 HorizontalAlignment="Left" VerticalAlignment="Top"
+                                 Opacity="0.5">
+                                </Ellipse>
+
+                                <Grid.Resources>
+                                    <Storyboard x:Key="RippleAnimation" Storyboard.TargetName="PART_effectRipple">
+                                        <!-- 波形(リップル)のアニメーションを実行 -->
+                                        <DoubleAnimation Storyboard.TargetProperty="Width" From="0" Duration="0:0:0.5"/>
+                                        <ThicknessAnimation Storyboard.TargetProperty="Margin" Duration="0:0:0.5"/>
+
+                                        <!-- 元に戻すためのアニメーション-->
+                                        <DoubleAnimation Storyboard.TargetProperty="Width" To="0" BeginTime="0:0:0.5" Duration="0:0:0" />
+
+                                    </Storyboard>
+                                </Grid.Resources>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <!-- マウスホバーが行われた際のスタイル設定 -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <!-- 背景色の変更 -->
+                                    <Setter TargetName="PART_border" Property="Background" Value="#E4D1F2"/>
+                                    <Setter TargetName="PART_label" Property="Foreground" Value="#58515D"/>
+                                    <!-- 影の付け方の変更 -->
+                                    <Setter TargetName="PART_border" Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect 
+                                        BlurRadius="12" Direction="-90" RenderingBias="Quality" ShadowDepth="4" Opacity="0.8"
+                                        ></DropShadowEffect>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -137,7 +171,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="220"/>
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Row="0" Grid.Column="0">
