@@ -382,7 +382,10 @@ namespace UmainD.ViewModel
         private void OnSave()
         {
             var saveFileDialog = new SaveFileDialog();
-            saveFileDialog.FileName = $@"{DateTime.Now.ToString("yyyyMMdd")}.json";
+            saveFileDialog.FileName = $@"{DateTime.Now.ToString("yyyyMMdd")}";
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.DefaultExt = "json";
+            saveFileDialog.Filter = "JSONファイル|*.json";
             saveFileDialog.InitialDirectory = Directory.GetParent(Assembly.GetExecutingAssembly().Location).ToString();
             if (saveFileDialog.ShowDialog() ?? false)
             {
