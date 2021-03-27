@@ -23,6 +23,8 @@
     <Window.ContextMenu>
         <ContextMenu>
             <MenuItem Header="リセット" Command="{Binding Reset}"/>
+            <MenuItem Header="セーブ" Command="{Binding Save}"/>
+            <MenuItem Header="ロード" Command="{Binding Load}"/>
         </ContextMenu>
     </Window.ContextMenu>
     <Grid Margin="10 5">

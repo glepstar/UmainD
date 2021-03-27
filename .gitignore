@@ -1,0 +1,11 @@
+﻿################################################################################
+# この .gitignore ファイルは Microsoft(R) Visual Studio によって自動的に作成されました。
+################################################################################
+
+/UmainD/Fonts/WanpakuRuika-07.TTF
+/.vs
+/packages/Microsoft.Xaml.Behaviors.Wpf.1.1.31
+/UmainD/bin/**/*
+/UmainD/obj/**/*
+/UmainD/UmainD.csproj.user
+/packages/Newtonsoft.Json.13.0.1

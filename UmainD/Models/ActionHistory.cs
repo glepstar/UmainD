@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,31 @@ namespace UmainD.Models
         internal void Clear()
         {
             actionHistory.Clear();
+        }
+
+        public void LoadFromJsonSting(string json)
+        {
+            var setting = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+
+            actionHistory.Clear();
+
+            foreach (var action in JsonConvert.DeserializeObject<IAction[]>(json, setting))
+            {
+                actionHistory.Push(action);
+            }
+        }
+
+        public string GetJson()
+        {
+            var setting = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+
+            return JsonConvert.SerializeObject(Actions, setting);
         }
     }
 }

@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -373,6 +375,39 @@ namespace UmainD.ViewModel
         {
             ActionHistory.Clear();
             Update();
+        }
+
+        public ICommand Save { get { return new DelegateCommand(OnSave); } }
+
+        private void OnSave()
+        {
+            var saveFileDialog = new SaveFileDialog();
+            saveFileDialog.FileName = $@"{DateTime.Now.ToString("yyyyMMdd")}.json";
+            saveFileDialog.InitialDirectory = Directory.GetParent(Assembly.GetExecutingAssembly().Location).ToString();
+            if (saveFileDialog.ShowDialog() ?? false)
+            {
+                using (var ofs = new StreamWriter(saveFileDialog.FileName, false, Encoding.UTF8))
+                {
+                    ofs.Write(ActionHistory.GetJson());
+                }
+            }
+        }
+
+        public ICommand Load { get { return new DelegateCommand(OnLoad); } }
+
+        private void OnLoad()
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Multiselect = false;
+            if (openFileDialog.ShowDialog() ?? false)
+            {
+                using (var ofs = new StreamReader(openFileDialog.FileName, Encoding.UTF8))
+                {
+                    var json = ofs.ReadToEnd();
+                    ActionHistory.LoadFromJsonSting(json);
+                    Update();
+                }
+            }
         }
 
         #endregion
